@@ -14,7 +14,8 @@ const getRequests = async (cityName) => {
   if (localStorage.length !== 0) {
      city = cityName
   }
-  const [{ Key, LocalizedName }] = await getCityData(city || cityName)
+  const cityExist = city || cityName
+  const [{ Key, LocalizedName }] = await getCityData(cityExist)
   const [{ WeatherText, Temperature, IsDayTime, WeatherIcon}] = await getCityWeather(Key)
 
   return [{ Key, LocalizedName }, { WeatherText, Temperature, IsDayTime, WeatherIcon}]
