@@ -8,17 +8,17 @@ let timeImg =  document.querySelector('[data-js="time"]')
 const timeIconContainer = document.querySelector('[data-js="time-icon"]')
 const timeICon = WeatherIcon => `<img src="./src/icons/${WeatherIcon}.svg"></img>`
 
-const getRequests = async (cityName) => {
+const fetchCityWeatherInfo = async (cityName) => {
   localStorage.setItem('city', cityName)
   let city= ''
   if (localStorage.length !== 0) {
      city = cityName
   }
-  const cityExist = city || cityName
-  const [{ Key, LocalizedName }] = await getCityData(cityExist)
+
+  const [{ Key, LocalizedName }] = await getCityData(city || cityName)
   const [{ WeatherText, Temperature, IsDayTime, WeatherIcon}] = await getCityWeather(Key)
 
-  return [{ Key, LocalizedName }, { WeatherText, Temperature, IsDayTime, WeatherIcon}]
+  return [{ LocalizedName }, { WeatherText, Temperature, IsDayTime, WeatherIcon}]
 }
 
 const showWeatherContainer = () => {
@@ -28,9 +28,9 @@ const showWeatherContainer = () => {
 }
 
 const addWeatherCityContents = async cityName => {
-  const [{ Key, LocalizedName}, 
+  const [{ LocalizedName }, 
     { IsDayTime, Temperature, WeatherText, WeatherIcon} ] = 
-  await getRequests(cityName)
+  await fetchCityWeatherInfo(cityName)
 
   timeImg.src = IsDayTime ?'./src/day.svg' :'./src/night.svg'
   timeIconContainer.innerHTML = timeICon(WeatherIcon)
@@ -47,7 +47,7 @@ const showLocalSorageCity = () => {
   }
 }
 
-cityForm.addEventListener('submit', event => {
+const handleCItyForm =  event => {
   event.preventDefault()
   
   const inputValue = event.target.city.value
@@ -55,6 +55,8 @@ cityForm.addEventListener('submit', event => {
   addWeatherCityContents(inputValue)
 
   cityForm.reset()
-})
+}
+
+cityForm.addEventListener('submit', handleCItyForm)
 
 showLocalSorageCity()
